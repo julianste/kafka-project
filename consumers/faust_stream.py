@@ -34,7 +34,7 @@ class TransformedStation(faust.Record):
 
 # TODO: Define a Faust Stream that ingests data from the Kafka Connect stations topic and
 #   places it into a new topic with only the necessary information.
-app = faust.App("stations-stream", broker="kafka://localhost:9092;kafka://localhost:9093;kafka://localhost:9094", store="memory://")
+app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
 topic = app.topic("com.udacity.raw.stations", value_type=Station)
 # TODO: Define the output Kafka Topic
 out_topic = app.topic("com.udacity.clean.stations", partitions=1)
@@ -45,7 +45,6 @@ table = app.Table(
    partitions=1,
    changelog_topic=out_topic,
 )
-
 
 #
 #
@@ -65,7 +64,7 @@ async def stations_event(stations):
         elif station.blue:
             line="blue"
         else:
-            raise Exception("no line provided for inamed " + str(station.station_name))
+            raise Exception("no line provided for station named " + str(station.station_name))
 
         table[station.station_id] = TransformedStation(
             station.station_id,

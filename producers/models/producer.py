@@ -24,23 +24,18 @@ class Producer:
         num_partitions=1,
         num_replicas=1,
     ):
-
-        print("Initializing producer for topic " + topic_name)
         """Initializes a Producer object with basic settings"""
         self.topic_name = topic_name
         self.key_schema = key_schema
         self.value_schema = value_schema
         self.num_partitions = num_partitions
         self.num_replicas = num_replicas
-
-        #
-        #
         # Configure the broker properties below. Make sure to reference the project README
         # and use the Host URL for Kafka and Schema Registry!
         #
         #
         self.broker_properties = {
-            'bootstrap.servers': "PLAINTEXT://localhost:9092;PLAINTEXT://localhost:9093;PLAINTEXT://localhost:9094",
+            'bootstrap.servers': "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094",
             'on_delivery': self.delivery_report,
             'schema.registry.url': 'http://localhost:8081'
             }
@@ -62,8 +57,9 @@ class Producer:
         # the Kafka Broker.
         #
         #
-        a = AdminClient({'bootstrap.servers': "PLAINTEXT://localhost:9092;PLAINTEXT://localhost:9093;PLAINTEXT://localhost:9094"})
-        futures = a.create_topics([NewTopic(self.topic_name, 1, 1)])
+        print("Create topic " + self.topic_name)
+        a = AdminClient({'bootstrap.servers': "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094"})
+        futures = a.create_topics([NewTopic(self.topic_name, 3, 2)])
 
         for topic, future in futures.items():
             try:

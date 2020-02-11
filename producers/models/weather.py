@@ -78,24 +78,29 @@ class Weather(Producer):
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
         #
         #
-        resp = requests.post(
-           f"{Weather.rest_proxy_url}/topics/{self.topic_name}",
-           headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
-           data=json.dumps(
+        json_data = json.dumps(
                {
                    "key_schema": json.dumps(Weather.key_schema),
                    "value_schema": json.dumps(Weather.value_schema),
                    "records": [
                        {
-                           "key": self.time_millis,
+                           "key": {
+                               "timestamp": self.time_millis()
+                           },
                            "value": {
                                "temperature": self.temp,
-                               "status": self.status
+                               "status": self.status.name
                            }
                        }
                    ]
                }
-           ),
+           )
+        print(json_data)
+
+        resp = requests.post(
+           f"{Weather.rest_proxy_url}/topics/{self.topic_name}",
+           headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
+           data=json_data,
         )
         resp.raise_for_status()
 

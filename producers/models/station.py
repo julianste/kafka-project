@@ -16,9 +16,6 @@ class Station(Producer):
 
     key_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_key.json")
 
-    #
-    # TODO: Define this value schema in `schemas/station_value.json, then uncomment the below
-    #
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_value.json")
 
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
@@ -58,21 +55,17 @@ class Station(Producer):
     def run(self, train, direction, prev_station_id, prev_direction):
         """Simulates train arrivals at this station"""
         #
-        #
-        # TODO: Complete this function by producing an arrival message to Kafka
-        #
+        # Produces an arrival message to Kafka
         #
 
-        train_id = self.a_train if self.a_train is not None else self.b_train
-        direction = self.dir_a if self.dir_a is not None else self.dir_b
         self.producer.produce(
            topic=self.topic_name,
            key={"timestamp": self.time_millis()},
            value={
                "station_id": self.station_id,
-               "train_id": train,
+               "train_id": train.train_id,
                "direction": direction,
-               "line": "L",
+               "line": self.color.name,
                "train_status": "arrival",
                "prev_station_id": prev_station_id,
                "prev_direction": prev_direction,
