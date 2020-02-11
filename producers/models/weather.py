@@ -21,7 +21,7 @@ class Weather(Producer):
         "status", "sunny partly_cloudy cloudy windy precipitation", start=0
     )
 
-    rest_proxy_url = "http://localhost:8082"
+    rest_proxy_url = "http://rest-proxy:8082"
 
     key_schema = None
     value_schema = None
@@ -37,7 +37,7 @@ class Weather(Producer):
         #
         #
         super().__init__(
-            "com.udacity.weather",
+            "org.chicago.cta.weather.v1",
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=3,

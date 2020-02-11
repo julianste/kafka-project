@@ -1,7 +1,7 @@
 """Producer base-class providing common utilites and functionality"""
 import logging
 import time
-
+import datetime
 
 from confluent_kafka import avro
 from confluent_kafka.admin import AdminClient, NewTopic
@@ -35,9 +35,9 @@ class Producer:
         #
         #
         self.broker_properties = {
-            'bootstrap.servers': "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094",
+            'bootstrap.servers': "PLAINTEXT://kafka0:19092,PLAINTEXT://kafka1:19092,PLAINTEXT://kafka2:19092",
             'on_delivery': self.delivery_report,
-            'schema.registry.url': 'http://localhost:8081'
+            'schema.registry.url': 'http://schema-registry:8081'
             }
 
         # If the topic does not already exist, try to create it
@@ -58,7 +58,7 @@ class Producer:
         #
         #
         print("Create topic " + self.topic_name)
-        a = AdminClient({'bootstrap.servers': "PLAINTEXT://localhost:9092,PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9094"})
+        a = AdminClient({'bootstrap.servers': "PLAINTEXT://kafka0:19092,PLAINTEXT://kafka1:19092,PLAINTEXT://kafka2:19092"})
         futures = a.create_topics([NewTopic(self.topic_name, 3, 2)])
 
         for topic, future in futures.items():
@@ -70,6 +70,10 @@ class Producer:
 
     def time_millis(self):
         return int(round(time.time() * 1000))
+
+    def _unix_time_millis(self, dt):
+        epoch = datetime.datetime.utcfromtimestamp(0)
+        return int((dt - epoch).total_seconds() * 1000.0)
 
     def close(self):
         """Prepares the producer for exit by cleaning up the producer"""
