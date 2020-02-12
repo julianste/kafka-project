@@ -29,9 +29,9 @@ CREATE TABLE turnstile (
     KAFKA_TOPIC = 'com.udacity.turnstile',
     VALUE_FORMAT = 'AVRO'
 );
-CREATE TABLE TURNSTILE_SUMMARY
-AS SELECT station_id, station_name,  COUNT(*) AS TOTAL 
-FROM turnstile GROUP BY station_id, station_name;
+CREATE TABLE TURNSTILE_SUMMARY WITH (VALUE_FORMAT = 'JSON')
+AS SELECT station_id, COUNT(station_id) AS count 
+FROM turnstile GROUP BY station_id;
 """
 
 

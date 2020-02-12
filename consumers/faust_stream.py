@@ -40,9 +40,9 @@ topic = app.topic("com.udacity.raw.stations", value_type=Station)
 out_topic = app.topic("org.chicago.cta.stations.table.v1", partitions=1)
 # TODO: Define a Faust Table
 table = app.Table(
-   "stations-table",
+   "org.chicago.cta.stations.table.v1",
    default=TransformedStation,
-   partitions=1,
+   partitions=2,
    changelog_topic=out_topic,
 )
 
@@ -66,7 +66,7 @@ async def stations_event(stations):
         else:
             logger.warning("no line provided for station named " + str(station.station_name))
             # do not ingest bad data
-            return
+            line="N/A"
 
         table[station.station_id] = TransformedStation(
             station.station_id,

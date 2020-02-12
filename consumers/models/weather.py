@@ -15,6 +15,5 @@ class Weather:
 
     def process_message(self, message):
         """Handles incoming weather data"""
-        logger.info("got weather message with key ${message.key} and value ${message.value}")
-        self.temperature = message.value["temperature"]
-        self.status = message.value["status"]
+        self.temperature = message.value()["temperature"]
+        self.status = message.value()["status"]
